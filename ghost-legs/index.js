@@ -8,11 +8,16 @@ var inputs = readline().split(" ");
 const W = parseInt(inputs[0]);
 const H = parseInt(inputs[1]) - 1;
 
-const getConnectorIndex = str =>
-  str
-    .split("|")
-    .filter(item => item !== "")
-    .findIndex(item => item === "--");
+const getNearConnectorIndex = (str, state) => {
+  const connectors = str.split("|").filter(item => item !== "");
+  if (connectors[state] === "--") {
+    return state;
+  } else if (connectors[state - 1] === "--") {
+    return state - 1;
+  }
+
+  return -1;
+};
 
 const alphabet = readline().split("  ");
 let lines = [];
@@ -25,13 +30,13 @@ for (let j = 0; j < alphabet.length; j++) {
   let state = j;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const connectorIndex = getConnectorIndex(line);
+    const connectorIndex = getNearConnectorIndex(line, state);
     printErr(`connectorIndex ${connectorIndex} state ${state}`);
 
     if (connectorIndex !== -1) {
       if (connectorIndex === state) {
         state++;
-      } else if (connectorIndex < state) {
+      } else if (connectorIndex === state - 1) {
         state--;
       } else {
         throw Error("Statement not correct");
@@ -41,5 +46,14 @@ for (let j = 0; j < alphabet.length; j++) {
   print(alphabet[j] + numerics[state]);
 }
 
-// Write an action using print()
-// To debug: printErr('Debug messages...');
+/*
+13 8
+A  B  C  D  E
+|  |  |  |  |
+|  |--|  |  |
+|--|  |  |  |
+|  |  |--|  |
+|  |--|  |--|
+|  |  |  |  |
+1  2  3  4  5
+*/
