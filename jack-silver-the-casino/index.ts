@@ -1,7 +1,7 @@
 declare const readline: () => string;
 
-const ROUNDS = parseInt(readline());
-const CASH = parseInt(readline());
+// const ROUNDS = parseInt(readline());
+// const CASH = parseInt(readline());
 const BET_RATIO = 0.25;
 const PLAIN_RATIO = 35;
 const EVEN_ODD_RATIO = 1;
@@ -60,13 +60,48 @@ console.error(even(125, 11) === 157);
 console.error(even(125, 12) === 93);
 console.error(odd(12555, 32) === 15694);
 console.error(process(12555, "32 ODD") === 15694);
+console.error(process(12555, "32 EVEN") === 9416);
+console.error(process(12555, "33 ODD") === 9416);
+console.error(process(12555, "33 EVEN") === 15694);
+console.error(process(12555, "33 PLAIN 33") === 122420);
+console.error(process(12555, "33 PLAIN 32") === 9416);
+console.error(process(12555, "32 PLAIN 33") === 9416);
 
-const COUNTER = new Array(ROUNDS).fill("");
-const result = COUNTER.reduce(currentCash => {
-  const str = readline();
-  const t = process(currentCash, str);
-  console.error(str, "current:", currentCash, "next:", t);
-  return t;
-}, CASH);
-console.error(result);
-console.log(result);
+const createCounter = (rounds: number) => {
+  let result = [];
+  for (let i = 0; i < rounds; i++) {
+    result.push(i);
+  }
+
+  return result;
+}
+
+const run = (rounds: number, readline: () => string, cash: number) => {
+  const counter = createCounter(rounds);
+  const result = counter.reduce(currentCash => {
+    const str = readline();
+    const t = process(currentCash, str);
+    console.error(str, "current:", currentCash, "next:", t);
+    return t;
+  }, cash);
+  console.error(result);
+  console.log(result);
+}
+
+const createRreadLine = () => {
+  let counter = 0;
+
+  const readlineImpl = () => {
+    '32 ODD'; // 1250
+    '32 EVEN'; // 937
+    '33 ODD';
+    '33 EVEN';
+    '33 PLAIN 33';
+    '33 PLAIN 32';
+    '32 PLAIN 31';
+  };
+
+  return readlineImpl;
+}
+
+run(2, createRreadLine() as any, 1000);
